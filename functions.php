@@ -27,34 +27,44 @@ function DrawCategories($maxCount, $departmentXml)
     $departmentId = $departmentXml->attributes()->id;
     foreach($departmentXml->categories->category as $cat)
     {
-      $view=1;
       $productId = $cat->productTypes->productType->attributes()->id;
-      if($productId==925){
-        $view=3;
-      }
-      $imgHref='http://image.spreadshirtmedia.net/image-server/v1/productTypes/'.$productId.'/views/'.$view.',width=130,height=130';
-      //$productXml = CallAPI(
+     //$productXml = CallAPI(
       echo '<fieldset class="category">';
       $refurl='categories.php?departmentid='.$departmentId.'&categoryid='.$cat->attributes()->id;
       echo '<a href="',$refurl,'">',$cat->name,'</a>';
-      echo '<a href="',$refurl,'"><img src="',$imgHref,'"/></a>';
+      echo '<a href="',$refurl,'">';
+      DrawProductImage($productId);
+      echo '</a>';
       echo '</fieldset>';
       $i=$i+1;
       if($i>=$maxCount)
         break;
     }
-   
 }
-function DrawProduct($productId){
-   $imgHref='http://image.spreadshirtmedia.net/image-server/v1/productTypes/'.$productId.'/views/'.$view.',width=130,height=130';
-  //$productXml = CallAPI(
+
+function DrawProductImage($productId)
+{
+      $view=1;
+      if($productId==925){
+        $view=3;
+      }
+      $imgHref='http://image.spreadshirtmedia.net/image-server/v1/productTypes/'.$productId.'/views/'.$view.',width=130,height=130';
+      echo '<img src="',$imgHref,'"/>'; 
+}
+
+function DrawProduct($productId,$locale){
+  $productHref='http://api.spreadshirt.net/api/v1/shops/1034542/productTypes/'.$productId.$locale;
+  $productXml = CallAPI($productHref);
   echo '<fieldset class="category">';
   $refurl='product.php?productid='.$productId;
-  echo '<a href="',$refurl,'">',$cat->name,'</a>';
-  echo '<a href="',$refurl,'"><img src="',$imgHref,'"/></a>';
+  echo '<a href="',$refurl,'">',$productXml->name,'</a>';
+  echo '<a href="',$refurl,'">';
+  DrawProductImage($productId);
+  echo '</a>';
 echo '</fieldset>';
  
 }
+
 
 function QueryAttribute($xmlNode, $attr_name, $attr_value) {
   foreach($xmlNode as $node) { 
