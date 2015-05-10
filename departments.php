@@ -12,10 +12,9 @@ include("functions.php");
 $locale='?locale=dk_DK';
 
 $departmentId=$_GET['departmentid'];
-$categoryId=$_GET['categoryid'];
 //echo $departmentId;
 //echo $categoryId;
-DrawCategory($locale, $departmentId, $categoryId);
+DrawDepartmentId($locale, $departmentId, 50);
 
 ?> 
  </body>

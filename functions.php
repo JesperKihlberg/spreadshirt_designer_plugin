@@ -1,8 +1,28 @@
 <?php
+function GetApiBaseUrl(){
+  $apiBaseUrl='http://api.spreadshirt.net/api/v1/shops/';
+  return $apiBaseUrl;
+}
+function GetImageBaseUrl(){
+  $imageBaseUrl='http://image.spreadshirtmedia.net/image-server/v1/';
+  return $imageBaseUrl;
+}
+
+function GetShopId(){
+  $shopId = '1034542';
+  return $shopId;
+}
+
+function GetDepartmentXml($locale,$departmentId)
+{
+  $href = GetApiBaseUrl().GetShopId()."/productTypeDepartments/".$departmentId.$locale;
+  $departmentXml=CallAPI($href);
+  return $departmentXml;
+}
 
 function DrawDepartments($locale)
 {
-  $xml=CallAPI("http://api.spreadshirt.net/api/v1/shops/1034542/productTypeDepartments",false);
+  $xml=CallAPI(GetApiBaseUrl().GetShopId()."/productTypeDepartments",false);
 
   echo '<div class="departments">';
   foreach($xml->children() as $department)
@@ -10,17 +30,27 @@ function DrawDepartments($locale)
     echo '<div class="department">';
     $attributes = $department->attributes('http://www.w3.org/1999/xlink');
     $href= $attributes['href'].$locale;
-    DrawDepartment($href);
+    DrawDepartment($href,4);
   }
   echo '</div>';
 }
-function DrawDepartment($href)
+
+function DrawDepartmentId($locale, $id, $categoryCount)
+{
+  $href=GetApiBaseUrl().GetShopId()."/productTypeDepartments/".$id.$locale;
+  echo $href;
+  DrawDepartment($href,$categoryCount);
+}
+
+function DrawDepartment($href,$categoryCount)
 {
     $departmentXml = CallAPI($href);
-    echo '<div class"departmentName"><a href="',$href,'"><h2>',$departmentXml->name,"</h2></a></div>";
-    DrawCategories(4, $departmentXml);
+    $id = $departmentXml->attributes()->id;
+    echo '<div class"departmentName"><a href="departments.php?departmentid=',$id,'"><h2>',$departmentXml->name,"</h2></a></div>";
+    DrawCategories($categoryCount, $departmentXml);
     echo '</div>';
 }
+
 function DrawCategories($maxCount, $departmentXml)
 {
     $i=0;
@@ -42,19 +72,33 @@ function DrawCategories($maxCount, $departmentXml)
     }
 }
 
+function DrawCategory($locale, $departmentId, $categoryId)
+{
+$departmentXml=GetDepartmentXml($locale,$departmentId);
+$categoryXml=QueryAttribute($departmentXml->categories->category,'id',$categoryId);
+//echo $categoryXml->name;
+echo '<div class"departmentName"><h2>',$categoryXml->name,' - <a href="',$href,'">',$departmentXml->name,"</a></h2></div>";
+foreach($categoryXml->productTypes->productType as $productType)
+{
+  $productId = $productType->attributes()->id;
+  DrawProduct($productId,$locale);
+}
+
+}
+
+
 function DrawProductImage($productId)
 {
       $view=1;
       if($productId==925){
         $view=3;
       }
-      $imgHref='http://image.spreadshirtmedia.net/image-server/v1/productTypes/'.$productId.'/views/'.$view.',width=130,height=130';
+      $imgHref=GetImageBaseUrl().'productTypes/'.$productId.'/views/'.$view.',width=130,height=130';
       echo '<img src="',$imgHref,'"/>'; 
 }
 
 function DrawProduct($productId,$locale){
-  $productHref='http://api.spreadshirt.net/api/v1/shops/1034542/productTypes/'.$productId.$locale;
-  $productXml = CallAPI($productHref);
+  $productXml = GetProductXml($productId,$locale);
   echo '<fieldset class="category">';
   $refurl='product.php?productid='.$productId;
   echo '<a href="',$refurl,'">',$productXml->name,'</a>';
@@ -65,6 +109,12 @@ echo '</fieldset>';
  
 }
 
+function GetProductXml($productId, $locale)
+{
+  $productHref=GetApiBaseUrl().'1034542/productTypes/'.$productId.$locale;
+  $productXml = CallAPI($productHref);
+  return $productXml;
+}
 
 function QueryAttribute($xmlNode, $attr_name, $attr_value) {
   foreach($xmlNode as $node) { 
