@@ -38,7 +38,6 @@ function DrawDepartments($locale)
 function DrawDepartmentId($locale, $id, $categoryCount)
 {
   $href=GetApiBaseUrl().GetShopId()."/productTypeDepartments/".$id.$locale;
-  echo $href;
   DrawDepartment($href,$categoryCount);
 }
 
@@ -105,13 +104,16 @@ function DrawProduct($productId,$locale){
   echo '<a href="',$refurl,'">';
   DrawProductImage($productId);
   echo '</a>';
-echo '</fieldset>';
+  echo '</fieldset>';
  
 }
+
+
 
 function GetProductXml($productId, $locale)
 {
   $productHref=GetApiBaseUrl().'1034542/productTypes/'.$productId.$locale;
+//  echo '<a href="',$productHref,'">',$productHref,'</a>';
   $productXml = CallAPI($productHref);
   return $productXml;
 }
