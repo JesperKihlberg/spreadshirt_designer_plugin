@@ -1,24 +1,23 @@
+<?php
+function category_func( $atts ) {
+    $a = shortcode_atts( array(
+        'shopid' => '',
+        'locale' => '',
+        'departmenturl' => '/index.php/maend',
+        'baseproducturl' => '/index.php/produkter',
+        'basecategoryurl' => '/index.php/kategori',
+    ), $atts );
 
-<html>
- <head>
-  <title>Categories</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link media="all" type="text/css" href="main.css" rel="stylesheet"></link>
+  $shopid = $a['shopid'];// 'http://monshirtdk.spreadshirt.dk';
+  $locale = '?locale='.$a['locale'];//'/dk/DK';
+  $departmenturl = $a['departmenturl'];
+  $basecategoryurl = $a['basecategoryurl'];
+  $baseproducturl = $a['baseproducturl'];
 
- </head>
- <body>
- <?php
-include("functions.php");
-$locale='?locale=dk_DK';
-
-$departmentId=$_GET['departmentid'];
-$categoryId=$_GET['categoryid'];
-//echo $departmentId;
-//echo $categoryId;
-DrawCategory($locale, $departmentId, $categoryId);
-
-?> 
- </body>
-</html>
-
+  $departmentid=$_GET['departmentid'];
+  $categoryid=$_GET['categoryid'];
+  //echo $departmentId;
+  //echo $categoryId;
+  DrawCategory($locale,$shopid, $departmentid, $categoryid,$departmenturl,$basecategoryurl,$baseproducturl);
+}
 

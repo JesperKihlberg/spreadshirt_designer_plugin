@@ -22,7 +22,9 @@ include("functions.php");
 include("designer.php");
 include("products.php");
 include("department.php");
+include("categories.php");
 
 add_shortcode( 'designer', 'designer_func' );
 add_shortcode( 'products', 'products_func' );
 add_shortcode( 'department', 'department_func' );
+add_shortcode( 'category', 'category_func' );

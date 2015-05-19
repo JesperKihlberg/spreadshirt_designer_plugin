@@ -71,8 +71,9 @@ function DrawCategories($maxCount, $departmentXml,$baseCategoryUrl)
     }
 }
 
-function DrawCategory($locale, $departmentId, $categoryId,$departmentUrl, $baseCategoryUrl)
+function DrawCategory($locale,$shopid, $departmentId, $categoryId,$departmentUrl, $baseCategoryUrl,$baseproducturl)
 {
+echo 'producturl',$baseproducturl;
 $departmentXml=GetDepartmentXml($locale,$departmentId);
 $categoryXml=QueryAttribute($departmentXml->categories->category,'id',$categoryId);
 //echo $categoryXml->name;
@@ -80,7 +81,7 @@ echo '<div class"departmentName"><h2>',$categoryXml->name,' - <a href="',$depart
 foreach($categoryXml->productTypes->productType as $productType)
 {
   $productId = $productType->attributes()->id;
-  DrawProduct($productId,$locale);
+  DrawProduct($locale,$shopid,$productId,$baseproducturl);
 }
 
 }
@@ -96,10 +97,10 @@ function DrawProductImage($productId)
       echo '<img src="',$imgHref,'"/>'; 
 }
 
-function DrawProduct($productId,$locale){
-  $productXml = GetProductXml($productId,$locale);
+function DrawProduct($locale,$shopid,$productId,$baseproducturl){
+  $productXml = GetProductXml($locale,$shopid,$productId);
   echo '<fieldset class="category">';
-  $refurl='product.php?productid='.$productId;
+  $refurl=$baseproducturl.'?productid='.$productId;
   echo '<a href="',$refurl,'">',$productXml->name,'</a>';
   echo '<a href="',$refurl,'">';
   DrawProductImage($productId);
@@ -110,9 +111,9 @@ function DrawProduct($productId,$locale){
 
 
 
-function GetProductXml($productId, $locale)
+function GetProductXml($locale,$shopid, $productId)
 {
-  $productHref=GetApiBaseUrl().'1034542/productTypes/'.$productId.$locale;
+  $productHref=GetApiBaseUrl().$shopid.'/productTypes/'.$productId.$locale;
 //  echo '<a href="',$productHref,'">',$productHref,'</a>';
   $productXml = CallAPI($productHref);
   return $productXml;
