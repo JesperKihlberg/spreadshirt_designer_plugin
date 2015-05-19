@@ -1,34 +1,45 @@
-
-<html>
- <head>
-  <title>Designer</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link media="all" type="text/css" href="main.css" rel="stylesheet"></link>
-
- </head>
- <body>
  <?php
-include("functions.php");
-$locale='?locale=dk_DK';
 
-$productId=$_GET['productid'];
-$designId=$_GET['designid'];
-echo $productId;
-echo $designId;
+function designer_func( $atts ) {
+    $a = shortcode_atts( array(
+        'shopurl' => '',
+        'language' => '',
+    ), $atts );
+$baseShopUrl = $a['shopurl'];// 'http://monshirtdk.spreadshirt.dk';
+$language = $a['language'];//'/dk/DK';
 
-$urlExtension = '';
+$urlExtension='';
 if (isset($_GET['productid']))
 {
-  $urlExtension = $urlExtension.'/productType/'.$productId;
+  $urlExtension = $urlExtension.'/productType/'.$_GET['productid'];
+}
+if (isset($_GET['product']))
+{
+  $urlExtension = $urlExtension.'/product/'.$_GET['product'];
 }
 if (isset($_GET['designid']))
 {
-  $urlExtension = $urlExtension.'/design/'.$designId;
+  $urlExtension = $urlExtension.'/design/'.$_GET['designid'];
+}
+if (isset($_GET['productcolor']))
+{
+  $urlExtension = $urlExtension.'/productColor/'.$_GET['productcolor'];
+}
+if (isset($_GET['designcolor1']))
+{
+  $urlExtension = $urlExtension.'/designColor1/'.$_GET['designcolor1'];
+}
+if (isset($_GET['designcolor2']))
+{
+  $urlExtension = $urlExtension.'/designColor2/'.$_GET['designcolor2'];
+}
+if (isset($_GET['department']))
+{
+  $urlExtension = $urlExtension.'/department/'.$_GET['department'];
 }
 
-echo '<iframe height="1800" width="670" src="http://monshirtdk.spreadshirt.dk/dk/DK/Shop/Index/Index',$urlExtension,'/" name="Spreadshop" id="Spreadshop" frameborder="0" onload="window.scrollTo(0, 0);"></iframe>';
-?> 
- </body>
-</html>
+echo '<iframe height="1800" width="670" src="',$baseShopUrl,$language,'/Shop/Index/Index',$urlExtension,'/" name="Spreadshop" id="Spreadshop" frameborder="0" onload="window.scrollTo(0, 0);"></iframe>';
 
+//    return RenderDesigner();
+}
 

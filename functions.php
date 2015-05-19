@@ -20,37 +20,37 @@ function GetDepartmentXml($locale,$departmentId)
   return $departmentXml;
 }
 
-function DrawDepartments($locale)
-{
-  $xml=CallAPI(GetApiBaseUrl().GetShopId()."/productTypeDepartments",false);
+//function DrawDepartments($locale, $shopId)
+//{
+//  $xml=CallAPI(GetApiBaseUrl().$shopId."/productTypeDepartments",false);
 
-  echo '<div class="departments">';
-  foreach($xml->children() as $department)
-  {
-    echo '<div class="department">';
-    $attributes = $department->attributes('http://www.w3.org/1999/xlink');
-    $href= $attributes['href'].$locale;
-    DrawDepartment($href,4);
-  }
-  echo '</div>';
+//  echo '<div class="departments">';
+//  foreach($xml->children() as $department)
+//  {
+//    echo '<div class="department">';
+//    $attributes = $department->attributes('http://www.w3.org/1999/xlink');
+//    $href= $attributes['href'].$locale;
+//    DrawDepartment($href,4);
+//  }
+//  echo '</div>';
+//}
+
+function DrawDepartmentId($locale, $shopId, $id, $categoryCount,$departmentUrl, $baseCategoryUrl)
+{
+  $href=GetApiBaseUrl().$shopId."/productTypeDepartments/".$id.$locale;
+  DrawDepartment($href,$categoryCount,$departmentUrl,$baseCategoryUrl);
 }
 
-function DrawDepartmentId($locale, $id, $categoryCount)
-{
-  $href=GetApiBaseUrl().GetShopId()."/productTypeDepartments/".$id.$locale;
-  DrawDepartment($href,$categoryCount);
-}
-
-function DrawDepartment($href,$categoryCount)
+function DrawDepartment($href,$categoryCount,$departmentUrl, $baseCategoryUrl)
 {
     $departmentXml = CallAPI($href);
     $id = $departmentXml->attributes()->id;
-    echo '<div class"departmentName"><a href="departments.php?departmentid=',$id,'"><h2>',$departmentXml->name,"</h2></a></div>";
-    DrawCategories($categoryCount, $departmentXml);
+    echo '<div class"departmentName"><a href="',$departmentUrl,'"><h2>',$departmentXml->name,"</h2></a></div>";
+    DrawCategories($categoryCount, $departmentXml, $baseCategoryUrl);
     echo '</div>';
 }
 
-function DrawCategories($maxCount, $departmentXml)
+function DrawCategories($maxCount, $departmentXml,$baseCategoryUrl)
 {
     $i=0;
     $departmentId = $departmentXml->attributes()->id;
@@ -59,7 +59,7 @@ function DrawCategories($maxCount, $departmentXml)
       $productId = $cat->productTypes->productType->attributes()->id;
      //$productXml = CallAPI(
       echo '<fieldset class="category">';
-      $refurl='categories.php?departmentid='.$departmentId.'&categoryid='.$cat->attributes()->id;
+      $refurl=$baseCategoryUrl.'?departmentid='.$departmentId.'&categoryid='.$cat->attributes()->id;
       echo '<a href="',$refurl,'">',$cat->name,'</a>';
       echo '<a href="',$refurl,'">';
       DrawProductImage($productId);
@@ -71,12 +71,12 @@ function DrawCategories($maxCount, $departmentXml)
     }
 }
 
-function DrawCategory($locale, $departmentId, $categoryId)
+function DrawCategory($locale, $departmentId, $categoryId,$departmentUrl, $baseCategoryUrl)
 {
 $departmentXml=GetDepartmentXml($locale,$departmentId);
 $categoryXml=QueryAttribute($departmentXml->categories->category,'id',$categoryId);
 //echo $categoryXml->name;
-echo '<div class"departmentName"><h2>',$categoryXml->name,' - <a href="',$href,'">',$departmentXml->name,"</a></h2></div>";
+echo '<div class"departmentName"><h2>',$categoryXml->name,' - <a href="',$departmentUrl,'">',$departmentXml->name,"</a></h2></div>";
 foreach($categoryXml->productTypes->productType as $productType)
 {
   $productId = $productType->attributes()->id;
