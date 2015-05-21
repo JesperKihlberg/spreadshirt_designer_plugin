@@ -71,13 +71,12 @@ function DrawCategories($maxCount, $departmentXml,$baseCategoryUrl)
     }
 }
 
-function DrawCategory($locale,$shopid, $departmentId, $categoryId,$departmentUrl, $baseCategoryUrl,$baseproducturl)
+function DrawCategory($locale,$shopid, $departmentId, $categoryId, $baseCategoryUrl,$baseproducturl)
 {
-echo 'producturl',$baseproducturl;
 $departmentXml=GetDepartmentXml($locale,$departmentId);
 $categoryXml=QueryAttribute($departmentXml->categories->category,'id',$categoryId);
 //echo $categoryXml->name;
-echo '<div class"departmentName"><h2>',$categoryXml->name,' - <a href="',$departmentUrl,'">',$departmentXml->name,"</a></h2></div>";
+echo '<div class"departmentName"><h2>',$categoryXml->name,' - ',$departmentXml->name,"</h2></div>";
 foreach($categoryXml->productTypes->productType as $productType)
 {
   $productId = $productType->attributes()->id;
@@ -96,6 +95,15 @@ function DrawProductImage($productId)
       $imgHref=GetImageBaseUrl().'productTypes/'.$productId.'/views/'.$view.',width=130,height=130';
       echo '<img src="',$imgHref,'"/>'; 
 }
+function DrawProductImageAppearance($productId,$apperanceId, $width)
+{
+      $view=1;
+      if($productId==925){
+        $view=3;
+      }
+      $imgHref=GetImageBaseUrl().'productTypes/'.$productId.'/views/'.$view.',width='.$width.',height='.$width.',appearanceId='.$apperanceId;
+      echo '<img src="',$imgHref,'"/>'; 
+}
 
 function DrawProduct($locale,$shopid,$productId,$baseproducturl){
   $productXml = GetProductXml($locale,$shopid,$productId);
@@ -109,12 +117,27 @@ function DrawProduct($locale,$shopid,$productId,$baseproducturl){
  
 }
 
+function DrawProductDetail($locale,$shopid,$departmentId,$categoryId,$productId,$basecategoryurl,$baseproducturl,$basedesignerurl){
+  $productXml = GetProductXml($locale,$shopid,$productId);
+
+  foreach($productXml->appearances->appearance as $appearance)
+  {
+    $appearanceId = $appearance->attributes()->id;
+    echo '<fieldset class="smallproduct">';
+    $refurl=$basedesignerurl.'?productid='.$productId.'&productcolor='.$appearanceId;
+    echo '<a href="',$refurl,'">',$appearance->name,'</a>';
+    echo '<a href="',$refurl,'">';
+    DrawProductImageAppearance($productId,$appearanceId,75);
+    echo '</a>';
+    echo '</fieldset>';
+  }
+}
 
 
 function GetProductXml($locale,$shopid, $productId)
 {
   $productHref=GetApiBaseUrl().$shopid.'/productTypes/'.$productId.$locale;
-//  echo '<a href="',$productHref,'">',$productHref,'</a>';
+  echo '<a href="',$productHref,'">',$productHref,'</a>';
   $productXml = CallAPI($productHref);
   return $productXml;
 }

@@ -20,11 +20,11 @@ Use it to make something cool, have fun, and share what you've learned with othe
 */
 include("functions.php");
 include("designer.php");
-include("products.php");
+include("product.php");
 include("department.php");
 include("categories.php");
 
 add_shortcode( 'designer', 'designer_func' );
-add_shortcode( 'products', 'products_func' );
+add_shortcode( 'product', 'product_func' );
 add_shortcode( 'department', 'department_func' );
 add_shortcode( 'category', 'category_func' );
