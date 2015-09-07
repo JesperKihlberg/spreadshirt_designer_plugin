@@ -14,7 +14,7 @@ function category_func( $atts ) {
 
   $departmentid=$_GET['departmentid'];
   $categoryid=$_GET['categoryid'];
-  //echo $departmentId;
+  echo $departmentId;
   //echo $categoryId;
   DrawCategory($locale,$shopid, $departmentid, $categoryid,$basecategoryurl,$baseproducturl);
 }

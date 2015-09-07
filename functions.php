@@ -8,32 +8,12 @@ function GetImageBaseUrl(){
   return $imageBaseUrl;
 }
 
-function GetShopId(){
-  $shopId = '1034542';
-  return $shopId;
-}
-
-function GetDepartmentXml($locale,$departmentId)
+function GetDepartmentXml($locale,$shopId,$departmentId)
 {
-  $href = GetApiBaseUrl().GetShopId()."/productTypeDepartments/".$departmentId.$locale;
+  $href = GetApiBaseUrl().$shopId."/productTypeDepartments/".$departmentId.$locale;
   $departmentXml=CallAPI($href);
   return $departmentXml;
 }
-
-//function DrawDepartments($locale, $shopId)
-//{
-//  $xml=CallAPI(GetApiBaseUrl().$shopId."/productTypeDepartments",false);
-
-//  echo '<div class="departments">';
-//  foreach($xml->children() as $department)
-//  {
-//    echo '<div class="department">';
-//    $attributes = $department->attributes('http://www.w3.org/1999/xlink');
-//    $href= $attributes['href'].$locale;
-//    DrawDepartment($href,4);
-//  }
-//  echo '</div>';
-//}
 
 function DrawDepartmentId($locale, $shopId, $id, $categoryCount,$departmentUrl, $baseCategoryUrl)
 {
@@ -73,7 +53,7 @@ function DrawCategories($maxCount, $departmentXml,$baseCategoryUrl)
 
 function DrawCategory($locale,$shopid, $departmentId, $categoryId, $baseCategoryUrl,$baseproducturl)
 {
-$departmentXml=GetDepartmentXml($locale,$departmentId);
+$departmentXml=GetDepartmentXml($locale,$shopid,$departmentId);
 $categoryXml=QueryAttribute($departmentXml->categories->category,'id',$categoryId);
 //echo $categoryXml->name;
 echo '<div class"departmentName"><h2>',$categoryXml->name,' - ',$departmentXml->name,"</h2></div>";
@@ -85,7 +65,6 @@ foreach($categoryXml->productTypes->productType as $productType)
 
 }
 
-
 function DrawProductImage($productId)
 {
       $view=1;
@@ -95,6 +74,7 @@ function DrawProductImage($productId)
       $imgHref=GetImageBaseUrl().'productTypes/'.$productId.'/views/'.$view.',width=130,height=130';
       echo '<img src="',$imgHref,'"/>'; 
 }
+
 function DrawProductImageAppearance($productId,$apperanceId, $width)
 {
       $view=1;
@@ -133,14 +113,18 @@ function DrawProductDetail($locale,$shopid,$departmentId,$categoryId,$productId,
     echo '</a>';
     echo '</fieldset>';
   }
-  
 }
 
+function DrawDesigns($count,$locale,$shopId, $departmentid, $categoryid,$productid,$basecategoryurl,$baseproducturl,$basedesignerurl){
+  echo 'designs';
+  $designsHref = GetApiBaseUrl().$shopId.'/articleCategories/'.$locale;
+  echo '<a href="',$designsHref,'">',$designsHref,'</a>';
+}
 
 function GetProductXml($locale,$shopid, $productId)
 {
   $productHref=GetApiBaseUrl().$shopid.'/productTypes/'.$productId.$locale;
-  echo '<a href="',$productHref,'">',$productHref,'</a>';
+//  echo '<a href="',$productHref,'">',$productHref,'</a>';
   $productXml = CallAPI($productHref);
   return $productXml;
 }
