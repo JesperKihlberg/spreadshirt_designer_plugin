@@ -28,3 +28,13 @@ add_shortcode( 'designer', 'designer_func' );
 add_shortcode( 'product', 'product_func' );
 add_shortcode( 'department', 'department_func' );
 add_shortcode( 'category', 'category_func' );
+
+add_action('wp_enqueue_scripts', 'add_css_func');
+
+function add_css_func()
+{
+  wp_register_style( 'custom-style', plugins_url( '/spreaddesign.css', __FILE__ ), array(), '20120208', 'all' );
+  wp_register_style( 'custom-style', get_template_directory_uri() . '/css/spreaddesign.css', array(), '20120208', 'all' );
+  wp_enqueue_style( 'custom-style' );
+
+}

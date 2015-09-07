@@ -119,7 +119,9 @@ function DrawProduct($locale,$shopid,$productId,$baseproducturl){
 
 function DrawProductDetail($locale,$shopid,$departmentId,$categoryId,$productId,$basecategoryurl,$baseproducturl,$basedesignerurl){
   $productXml = GetProductXml($locale,$shopid,$productId);
-
+  echo '<div class="productName">',$productXml->name,'</div>';
+  echo '<div class="productShortDesc">',$productXml->shortDescription,'</div>';
+  echo '<div class="productDesc">',$productXml->description,'</div>';
   foreach($productXml->appearances->appearance as $appearance)
   {
     $appearanceId = $appearance->attributes()->id;
@@ -131,6 +133,7 @@ function DrawProductDetail($locale,$shopid,$departmentId,$categoryId,$productId,
     echo '</a>';
     echo '</fieldset>';
   }
+  
 }
 
 
