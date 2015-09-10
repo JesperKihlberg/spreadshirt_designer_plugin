@@ -75,7 +75,7 @@ function DrawProductImageAppearance($locale,$shopId,$productId,$apperanceId, $wi
     $articleHref = GetApiBaseUrl().$shopId.'/articles?query=+productTypeIds:('.$productId.')&limit=1';
     $articleXml = CallAPI($articleHref);
     $imgHref = '';
-    if($articleImgHref=$articleXml->count()>0)
+    if($articleXml->count()>0)
     {
         $imgHref=$articleXml->article->resources->resource->attributes('http://www.w3.org/1999/xlink')->href;
     }
@@ -95,6 +95,49 @@ function DrawProductImageAppearance($locale,$shopId,$productId,$apperanceId, $wi
     echo '<img src="',$imgHref,'"/>'; 
 }
 
+function DrawRelatedArticles($locale,$shopId,$productId,$apperanceId,$width){
+    $articleHref = GetApiBaseUrl().$shopId.'/articles?query=+productTypeIds:('.$productId.')&limit=20';
+    $articleXml = CallAPI($articleHref);
+    $imgHref = '';
+    if($articleXml->count()>0)
+    {
+        foreach($articleXml->article->resources->resource as $resource){
+            $imgHref=$resource->attributes('http://www.w3.org/1999/xlink')->href;
+            $imgHref.=',width='.$width.',height='.$width;
+            if($apperanceId!='')
+            {
+                $imgHref.=  ',appearanceId='.$apperanceId;
+            }
+            echo '<img src="',$imgHref,'"/>'; 
+        }
+    }
+    else
+    {
+        $view=1;
+        if($productId==925){
+            $view=3;
+        }
+        $imgHref=GetImageBaseUrl().'productTypes/'.$productId.'/views/'.$view;
+        $imgHref.=',width='.$width.',height='.$width;
+        if($apperanceId!='')
+        {
+            $imgHref.=  ',appearanceId='.$apperanceId;
+        }
+        echo '<img src="',$imgHref,'"/>'; 
+    }
+}
+function DrawAppearanceIcons($locale,$shopId,$productId){
+    $productXml = GetProductXml($locale,$shopId,$productId);
+    echo '<div class="appearanceIcons">';
+    foreach($productXml->appearances->appearance as $appearance)
+    {
+        $imgHref = $appearance->resources->resource->attributes('http://www.w3.org/1999/xlink')->href;
+        $appearanceId = $appearance->attributes()->id;
+        echo '<img id"',$appearanceId,'" src="',$imgHref,'"/>'; 
+    }
+    echo '</div>';
+}
+
 function DrawProduct($locale,$shopId,$productId,$baseproducturl){
     $productXml = GetProductXml($locale,$shopId,$productId);
     echo '<fieldset class="category">';
@@ -112,17 +155,19 @@ function DrawProductDetail($locale,$shopId,$departmentId,$categoryId,$productId,
     echo '<div class="productName">',$productXml->name,'</div>';
     echo '<div class="productShortDesc">',$productXml->shortDescription,'</div>';
     echo '<div class="productDesc">',$productXml->description,'</div>';
-    foreach($productXml->appearances->appearance as $appearance)
-    {
-        $appearanceId = $appearance->attributes()->id;
-        echo '<fieldset class="smallproduct">';
-        $refurl=$basedesignerurl.'?productid='.$productId.'&productcolor='.$appearanceId;
-        echo '<a href="',$refurl,'">',$appearance->name,'</a>';
-        echo '<a href="',$refurl,'">';
-        DrawProductImageAppearance($locale,$shopId,$productId,$appearanceId,75);
-        echo '</a>';
-        echo '</fieldset>';
-    }
+    DrawAppearanceIcons($locale,$shopId,$productId);
+    DrawRelatedArticles($locale,$shopId,$productId,'',75);
+    //foreach($productXml->appearances->appearance as $appearance)
+    //{
+    //    $appearanceId = $appearance->attributes()->id;
+    //    echo '<fieldset class="smallproduct">';
+    //    $refurl=$basedesignerurl.'?productid='.$productId.'&productcolor='.$appearanceId;
+    //    echo '<a href="',$refurl,'">',$appearance->name,'</a>';
+    //    echo '<a href="',$refurl,'">';
+    //    DrawProductImageAppearance($locale,$shopId,$productId,$appearanceId,75);
+    //    echo '</a>';
+    //    echo '</fieldset>';
+    //}
 }
 
 function DrawDesigns($count,$locale,$shopId, $departmentid, $categoryid,$productid,$basecategoryurl,$baseproducturl,$basedesignerurl){
