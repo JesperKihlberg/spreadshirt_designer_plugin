@@ -43,5 +43,5 @@ function add_css_func()
 }
 
 function add_js_func(){
-    wp_register_script( 'custom-script', plugins_url( '/spreaddesign.js', __FILE__ ) );
+    wp_enqueue_script( 'custom-script', plugins_url( '/spreaddesign.js', __FILE__ ) );
 }
