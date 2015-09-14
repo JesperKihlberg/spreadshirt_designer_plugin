@@ -98,7 +98,7 @@ function DrawProductImageAppearance($locale,$shopId,$productId,$apperanceId, $wi
 function DrawRelatedArticles($locale,$shopId,$productTypeId,$apperanceId,$width,$designerUrl){
     $articleHref = GetApiBaseUrl().$shopId.'/articles?query=+productTypeIds:('.$productTypeId.')&limit=20';
     $articleXml = CallAPI($articleHref);
-    $imgHref = '';
+
     if($articleXml->count()>0)
     {
         foreach($articleXml->article->resources->resource as $resource){
@@ -140,7 +140,9 @@ function DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $desi
     $imgHref.=  ',appearanceId='.$apperanceId;
 
     echo '<a class="designerLink" href="',$designerUrl,'?',$designerLinkProperties,'&productcolor=',$apperanceId,'" baseUrl="',$designerUrl,'?',$designerLinkProperties,'&productcolor=">';
+    echo '<div data-content="TILPAS OG BESTIL" class="designerLinkDiv">';
     echo '<img class="articleThumb" baseUrl="',$baseHref,',appearanceId="',$imgUrlProperties,'" src="',$imgHref,'"/>'; 
+    echo '</div>';
     echo '</a>';
 }
 
@@ -176,7 +178,7 @@ function DrawProductDetail($locale,$shopId,$departmentId,$categoryId,$productId,
     echo '<div class="productShortDesc">',$productXml->shortDescription,'</div>';
     echo '<div class="productDesc">',$productXml->description,'</div>';
     DrawAppearanceIcons($locale,$shopId,$productId);
-    DrawRelatedArticles($locale,$shopId,$productId,'',75,$basedesignerurl);
+    DrawRelatedArticles($locale,$shopId,$productId,'',130,$basedesignerurl);
 }
 
 function DrawDesigns($count,$locale,$shopId, $departmentid, $categoryid,$productid,$basecategoryurl,$baseproducturl,$basedesignerurl){

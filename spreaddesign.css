@@ -12,6 +12,39 @@ fieldset.smallproduct {
     overflow: hidden;
     display:inline-block;
 }
+
+.designerLinkDiv {
+    position:relative;
+    width:130px;
+    height:130px;
+}
+
+.designerLinkDiv:after, .designerLinkDiv:before {
+    position:absolute;
+    opacity:0;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+}
+.designerLinkDiv:after {
+    content:'\A';
+    width:100%; height:100%;
+    top:0; left:0;
+    background:rgba(0,0,0,0.6);
+}
+.designerLinkDiv:before {
+    content: attr(data-content);
+    width:100%;
+    color:#fff;
+    z-index:1;
+    bottom:50px;
+    padding:4px 10px;
+    text-align:center;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+}
+.designerLinkDiv:hover:after, .designerLinkDiv:hover:before {
+    opacity:1;
+}
 /*img {
    position: absolute;
     bottom: 0;

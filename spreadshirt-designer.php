@@ -22,16 +22,17 @@ include("functions.php");
 include("designer.php");
 include("product.php");
 include("department.php");
-include("categories.php");
-include("designs.php");
+include("category.php");
+//include("designs.php");
 
 add_shortcode( 'designer', 'designer_func' );
 add_shortcode( 'product', 'product_func' );
 add_shortcode( 'department', 'department_func' );
 add_shortcode( 'category', 'category_func' );
-add_shortcode( 'designs', 'designs_func');
+//add_shortcode( 'designs', 'designs_func');
 
 add_action('wp_enqueue_scripts', 'add_css_func');
+add_action('wp_enqueue_scripts', 'add_js_func');
 
 function add_css_func()
 {
@@ -39,4 +40,8 @@ function add_css_func()
   wp_register_style( 'custom-style', get_template_directory_uri() . '/css/spreaddesign.css', array(), '20120208', 'all' );
   wp_enqueue_style( 'custom-style' );
 
+}
+
+function add_js_func(){
+    wp_register_script( 'custom-script', plugins_url( '/spreaddesign.js', __FILE__ ) );
 }
