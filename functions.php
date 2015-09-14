@@ -95,8 +95,8 @@ function DrawProductImageAppearance($locale,$shopId,$productId,$apperanceId, $wi
     echo '<img src="',$imgHref,'"/>'; 
 }
 
-function DrawRelatedArticles($locale,$shopId,$productId,$apperanceId,$width){
-    $articleHref = GetApiBaseUrl().$shopId.'/articles?query=+productTypeIds:('.$productId.')&limit=20';
+function DrawRelatedArticles($locale,$shopId,$productTypeId,$apperanceId,$width,$designerUrl){
+    $articleHref = GetApiBaseUrl().$shopId.'/articles?query=+productTypeIds:('.$productTypeId.')&limit=20';
     $articleXml = CallAPI($articleHref);
     $imgHref = '';
     if($articleXml->count()>0)
@@ -104,11 +104,18 @@ function DrawRelatedArticles($locale,$shopId,$productId,$apperanceId,$width){
         foreach($articleXml->article->resources->resource as $resource){
             $imgHref=$resource->attributes('http://www.w3.org/1999/xlink')->href;
             $imgHref.=',width='.$width.',height='.$width;
-            if($apperanceId!='')
+            $baseHref = $imgHref;
+            if($apperanceId=='')
             {
-                $imgHref.=  ',appearanceId='.$apperanceId;
+                $productXml = GetProductXml($locale,$shopId,$productTypeId);
+                $apperanceId = $productXml->appearances->appearance->attributes()->id;
             }
-            echo '<img src="',$imgHref,'"/>'; 
+            $imgHref.=  ',appearanceId='.$apperanceId;
+
+            $productId = explode("/views/",explode("/products/",$imgHref)[1])[0];
+            echo '<a class="designerLink" href="',$designerUrl,'?product=',$productId,'&productcolor=',$apperanceId,'" baseUrl="',$designerUrl,'?product=',$productId,'&productcolor=">';
+            echo '<img class="articleThumb" baseUrl="',$baseHref,',appearanceId="',$apperanceId,'" productId="',$productId,'" src="',$imgHref,'"/>'; 
+            echo '</a>';
         }
     }
     else
@@ -117,13 +124,19 @@ function DrawRelatedArticles($locale,$shopId,$productId,$apperanceId,$width){
         if($productId==925){
             $view=3;
         }
-        $imgHref=GetImageBaseUrl().'productTypes/'.$productId.'/views/'.$view;
+        $imgHref=GetImageBaseUrl().'productTypes/'.$productTypeId.'/views/'.$view;
         $imgHref.=',width='.$width.',height='.$width;
-        if($apperanceId!='')
+        $baseHref = $imgHref;
+        if($apperanceId=='')
         {
-            $imgHref.=  ',appearanceId='.$apperanceId;
+            $productXml = GetProductXml($locale,$shopId,$productTypeId);
+            $apperanceId = $productXml->appearances->appearance->attributes()->id;
         }
-        echo '<img src="',$imgHref,'"/>'; 
+        $imgHref.=  ',appearanceId='.$apperanceId;
+
+        echo '<a class="designerLink" href="',$designerUrl,'?productid=',$productTypeId,'&productcolor=',$apperanceId,'" baseUrl="',$designerUrl,'?productid=',$productTypeId,'&productcolor=">';
+        echo '<img class="articleThumb" baseUrl="',$baseHref,',appearanceId="',$apperanceId,'" productTypeId="',$productTypeId,'" src="',$imgHref,'"/>'; 
+        echo '</a>';
     }
 }
 function DrawAppearanceIcons($locale,$shopId,$productId){
@@ -132,11 +145,13 @@ function DrawAppearanceIcons($locale,$shopId,$productId){
     foreach($productXml->appearances->appearance as $appearance)
     {
         $imgHref = $appearance->resources->resource->attributes('http://www.w3.org/1999/xlink')->href;
+        $name = $appearance->name;
         $appearanceId = $appearance->attributes()->id;
-        echo '<img id"',$appearanceId,'" src="',$imgHref,'"/>'; 
+        echo '<img class="appearanceIcon" onClick="onAppereanceClick(',$appearanceId,')" appearanceId="',$appearanceId,'" src="',$imgHref,'" alt="',$name,'" title="',$name,'" />'; 
     }
     echo '</div>';
 }
+
 
 function DrawProduct($locale,$shopId,$productId,$baseproducturl){
     $productXml = GetProductXml($locale,$shopId,$productId);
@@ -156,7 +171,7 @@ function DrawProductDetail($locale,$shopId,$departmentId,$categoryId,$productId,
     echo '<div class="productShortDesc">',$productXml->shortDescription,'</div>';
     echo '<div class="productDesc">',$productXml->description,'</div>';
     DrawAppearanceIcons($locale,$shopId,$productId);
-    DrawRelatedArticles($locale,$shopId,$productId,'',75);
+    DrawRelatedArticles($locale,$shopId,$productId,'',75,$basedesignerurl);
     //foreach($productXml->appearances->appearance as $appearance)
     //{
     //    $appearanceId = $appearance->attributes()->id;
