@@ -103,19 +103,12 @@ function DrawRelatedArticles($locale,$shopId,$productTypeId,$apperanceId,$width,
     {
         foreach($articleXml->article->resources->resource as $resource){
             $imgHref=$resource->attributes('http://www.w3.org/1999/xlink')->href;
-            $imgHref.=',width='.$width.',height='.$width;
-            $baseHref = $imgHref;
-            if($apperanceId=='')
-            {
-                $productXml = GetProductXml($locale,$shopId,$productTypeId);
-                $apperanceId = $productXml->appearances->appearance->attributes()->id;
-            }
-            $imgHref.=  ',appearanceId='.$apperanceId;
-
             $productId = explode("/views/",explode("/products/",$imgHref)[1])[0];
-            echo '<a class="designerLink" href="',$designerUrl,'?product=',$productId,'&productcolor=',$apperanceId,'" baseUrl="',$designerUrl,'?product=',$productId,'&productcolor=">';
-            echo '<img class="articleThumb" baseUrl="',$baseHref,',appearanceId="',$apperanceId,'" productId="',$productId,'" src="',$imgHref,'"/>'; 
-            echo '</a>';
+ 
+            $designerLinkProperties ='product='.$productId;
+            $imgUrlProperties= '" productId="'.$productId;
+            
+            DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties);
         }
     }
     else
@@ -124,21 +117,33 @@ function DrawRelatedArticles($locale,$shopId,$productTypeId,$apperanceId,$width,
         if($productId==925){
             $view=3;
         }
-        $imgHref=GetImageBaseUrl().'productTypes/'.$productTypeId.'/views/'.$view;
-        $imgHref.=',width='.$width.',height='.$width;
-        $baseHref = $imgHref;
-        if($apperanceId=='')
-        {
-            $productXml = GetProductXml($locale,$shopId,$productTypeId);
-            $apperanceId = $productXml->appearances->appearance->attributes()->id;
-        }
-        $imgHref.=  ',appearanceId='.$apperanceId;
 
-        echo '<a class="designerLink" href="',$designerUrl,'?productid=',$productTypeId,'&productcolor=',$apperanceId,'" baseUrl="',$designerUrl,'?productid=',$productTypeId,'&productcolor=">';
-        echo '<img class="articleThumb" baseUrl="',$baseHref,',appearanceId="',$apperanceId,'" productTypeId="',$productTypeId,'" src="',$imgHref,'"/>'; 
-        echo '</a>';
+        $imgHref=GetImageBaseUrl().'productTypes/'.$productTypeId.'/views/'.$view;
+
+        $designerLinkProperties ='productid='.$productTypeId;
+        $imgUrlProperties= '" productTypeId="'.$productTypeId;
+        
+        DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties);
     }
 }
+
+function DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties){
+
+    $imgHref.=',width='.$width.',height='.$width;
+
+    $baseHref = $imgHref;
+    if($apperanceId=='')
+    {
+        $productXml = GetProductXml($locale,$shopId,$productTypeId);
+        $apperanceId = $productXml->appearances->appearance->attributes()->id;
+    }
+    $imgHref.=  ',appearanceId='.$apperanceId;
+
+    echo '<a class="designerLink" href="',$designerUrl,'?',$designerLinkProperties,'&productcolor=',$apperanceId,'" baseUrl="',$designerUrl,'?',$designerLinkProperties,'&productcolor=">';
+    echo '<img class="articleThumb" baseUrl="',$baseHref,',appearanceId="',$imgUrlProperties,'" src="',$imgHref,'"/>'; 
+    echo '</a>';
+}
+
 function DrawAppearanceIcons($locale,$shopId,$productId){
     $productXml = GetProductXml($locale,$shopId,$productId);
     echo '<div class="appearanceIcons">';
@@ -172,17 +177,6 @@ function DrawProductDetail($locale,$shopId,$departmentId,$categoryId,$productId,
     echo '<div class="productDesc">',$productXml->description,'</div>';
     DrawAppearanceIcons($locale,$shopId,$productId);
     DrawRelatedArticles($locale,$shopId,$productId,'',75,$basedesignerurl);
-    //foreach($productXml->appearances->appearance as $appearance)
-    //{
-    //    $appearanceId = $appearance->attributes()->id;
-    //    echo '<fieldset class="smallproduct">';
-    //    $refurl=$basedesignerurl.'?productid='.$productId.'&productcolor='.$appearanceId;
-    //    echo '<a href="',$refurl,'">',$appearance->name,'</a>';
-    //    echo '<a href="',$refurl,'">';
-    //    DrawProductImageAppearance($locale,$shopId,$productId,$appearanceId,75);
-    //    echo '</a>';
-    //    echo '</fieldset>';
-    //}
 }
 
 function DrawDesigns($count,$locale,$shopId, $departmentid, $categoryid,$productid,$basecategoryurl,$baseproducturl,$basedesignerurl){
