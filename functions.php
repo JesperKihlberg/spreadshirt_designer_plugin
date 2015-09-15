@@ -101,14 +101,17 @@ function DrawRelatedArticles($locale,$shopId,$productTypeId,$apperanceId,$width,
 
     if($articleXml->count()>0)
     {
-        foreach($articleXml->article->resources->resource as $resource){
-            $imgHref=$resource->attributes('http://www.w3.org/1999/xlink')->href;
+        foreach($articleXml->article as $article){
+            $imgHref=$article->resources->resource->attributes('http://www.w3.org/1999/xlink')->href;
             $productId = explode("/views/",explode("/products/",$imgHref)[1])[0];
  
             $designerLinkProperties ='product='.$productId;
             $imgUrlProperties= '" productId="'.$productId;
-            
-            DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties);
+            $price=$article->price->vatIncluded;
+            $currencyHref=$article->price->currency->attributes('http://www.w3.org/1999/xlink')->href;
+            $currency=CallAPI($currencyHref);
+            $priceText=formatPrice($price, $currency->symbol, $currency->decimalCount, $currency->pattern, $country->thousandsSeparator, $country->decimalPoint);
+            DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties, $priceText);
         }
     }
     else
@@ -122,32 +125,83 @@ function DrawRelatedArticles($locale,$shopId,$productTypeId,$apperanceId,$width,
 
         $designerLinkProperties ='productid='.$productTypeId;
         $imgUrlProperties= '" productTypeId="'.$productTypeId;
-        
-        DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties);
+        $productXml = GetProductTypeXml($locale,$shopId,$productTypeId);
+        $price=$productXml->price->vatIncluded;
+        $currencyHref=$productXml->price->currency->attributes('http://www.w3.org/1999/xlink')->href;
+        $currency=CallAPI($currencyHref);
+        $priceText=formatPrice($price, $currency->symbol, $currency->decimalCount, $currency->pattern, $country->thousandsSeparator, $country->decimalPoint);
+        DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties, $priceText);
     }
 }
 
-function DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties){
+function formatPrice($price, $symbol, $decimalCount, $pattern, $thousandsSeparator, $decimalPoint) {
+    // formatting settings
+    $price = "" . $price;
+    
+    // split integer from cents
+    $centsVal = "";
+    $integerVal = "0";
+    if (strpos($price, '.') != -1) {
+        $centsVal = "" .substr($price, strpos($price, '.') + 1, strlen($price) - strpos($price, '.') + 1);
+        $integerVal = "" .substr($price, 0, strpos($price, '.'));
+    } else {
+        $integerVal = $price;
+    }
+    
+    $formatted = "";
+    
+    $count = 0;
+    for ($j = strlen($integerVal)-1; $j >= 0; $j--) {
+        $character = $integerVal[$j];
+        $count++;
+        if ($count % 3 == 0)
+            $formatted = ($thousandsSeparator . $character) . $formatted;
+        else
+            $formatted = $character . $formatted;
+    }
+    if ($formatted[0] == $thousandsSeparator)
+        $formatted = substr($formatted, 1, strlen($formatted));
+    
+    $formatted .= $decimalPoint;
+    
+    for ($j = 0; $j < $decimalCount; $j++) {
+        if($j < strlen($centsVal)) {
+            $formatted .= "" . $centsVal[$j];
+        } else {
+            $formatted .= "0";
+        }
+    }
+    
+    $out = $pattern;
+    $out = str_replace('%', $formatted, $out);
+    $out = str_replace('$', $symbol, $out);
+    return $out;
+};
+
+function DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties, $priceText){
 
     $imgHref.=',width='.$width.',height='.$width;
-
+    $articleDesc ='';
     $baseHref = $imgHref;
     if($apperanceId=='')
     {
-        $productXml = GetProductXml($locale,$shopId,$productTypeId);
+        $productXml = GetProductTypeXml($locale,$shopId,$productTypeId);
         $apperanceId = $productXml->appearances->appearance->attributes()->id;
     }
     $imgHref.=  ',appearanceId='.$apperanceId;
-
+    echo '<div class="article">';
     echo '<a class="designerLink" href="',$designerUrl,'?',$designerLinkProperties,'&productcolor=',$apperanceId,'" baseUrl="',$designerUrl,'?',$designerLinkProperties,'&productcolor=">';
     echo '<div data-content="TILPAS OG BESTIL" class="designerLinkDiv">';
     echo '<img class="articleThumb" baseUrl="',$baseHref,',appearanceId="',$imgUrlProperties,'" src="',$imgHref,'"/>'; 
     echo '</div>';
     echo '</a>';
+    echo '<div class="priceTag">',$priceText,'</div>';
+    echo '<div class="smallArticleDesc">',$articleDesc,'</div>';
+    echo '</div>';
 }
 
 function DrawAppearanceIcons($locale,$shopId,$productId){
-    $productXml = GetProductXml($locale,$shopId,$productId);
+    $productXml = GetProductTypeXml($locale,$shopId,$productId);
     echo '<div class="appearanceIcons">';
     foreach($productXml->appearances->appearance as $appearance)
     {
@@ -161,7 +215,7 @@ function DrawAppearanceIcons($locale,$shopId,$productId){
 
 
 function DrawProduct($locale,$shopId,$productId,$baseproducturl){
-    $productXml = GetProductXml($locale,$shopId,$productId);
+    $productXml = GetProductTypeXml($locale,$shopId,$productId);
     echo '<fieldset class="category">';
     $refurl=$baseproducturl.'?productid='.$productId;
     echo '<a href="',$refurl,'">',$productXml->name,'</a>';
@@ -173,7 +227,7 @@ function DrawProduct($locale,$shopId,$productId,$baseproducturl){
 }
 
 function DrawProductDetail($locale,$shopId,$departmentId,$categoryId,$productId,$basecategoryurl,$baseproducturl,$basedesignerurl){
-    $productXml = GetProductXml($locale,$shopId,$productId);
+    $productXml = GetProductTypeXml($locale,$shopId,$productId);
     echo '<div class="productName">',$productXml->name,'</div>';
     echo '<div class="productShortDesc">',$productXml->shortDescription,'</div>';
     echo '<div class="productDesc">',$productXml->description,'</div>';
@@ -187,7 +241,7 @@ function DrawDesigns($count,$locale,$shopId, $departmentid, $categoryid,$product
     echo '<a href="',$designsHref,'">',$designsHref,'</a>';
 }
 
-function GetProductXml($locale,$shopId, $productId)
+function GetProductTypeXml($locale,$shopId, $productId)
 {
     $productHref=GetApiBaseUrl().$shopId.'/productTypes/'.$productId.$locale;
     //  echo '<a href="',$productHref,'">',$productHref,'</a>';
