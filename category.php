@@ -16,14 +16,14 @@ function category_func( $atts ) {
     $categoryid=$a['categoryid'];
     $departmentid=$a['departmentid'];
 
-    if($departmentid!=''){
+    if($departmentid==''){
         $departmentid=$_GET['departmentid'];
     }
-    if($categoryid!=''){
+    if($categoryid==''){
         $categoryid=$_GET['categoryid'];
     }
-    //echo $departmentId;
-    //echo $categoryId;
+    echo $departmentId;
+    echo $categoryId;
     DrawCategory($locale,$shopid, $departmentid, $categoryid,$basecategoryurl,$baseproducturl);
 }
 ?>
