@@ -107,11 +107,8 @@ function DrawRelatedArticles($locale,$shopId,$productTypeId,$apperanceId,$width,
  
             $designerLinkProperties ='product='.$productId;
             $imgUrlProperties= '" productId="'.$productId;
-            $price=$article->price->vatIncluded;
-            $currencyHref=$article->price->currency->attributes('http://www.w3.org/1999/xlink')->href;
-            $currency=CallAPI($currencyHref);
-            $priceText=formatPrice($price, $currency->symbol, $currency->decimalCount, $currency->pattern, $country->thousandsSeparator, $country->decimalPoint);
-            DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties, $priceText);
+            $price=$article->price;
+            DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties,$price);
         }
     }
     else
@@ -126,11 +123,8 @@ function DrawRelatedArticles($locale,$shopId,$productTypeId,$apperanceId,$width,
         $designerLinkProperties ='productid='.$productTypeId;
         $imgUrlProperties= '" productTypeId="'.$productTypeId;
         $productXml = GetProductTypeXml($locale,$shopId,$productTypeId);
-        $price=$productXml->price->vatIncluded;
-        $currencyHref=$productXml->price->currency->attributes('http://www.w3.org/1999/xlink')->href;
-        $currency=CallAPI($currencyHref);
-        $priceText=formatPrice($price, $currency->symbol, $currency->decimalCount, $currency->pattern, $country->thousandsSeparator, $country->decimalPoint);
-        DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties, $priceText);
+        $price=$productXml->price;
+        DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties,$price);
     }
 }
 
@@ -178,7 +172,7 @@ function formatPrice($price, $symbol, $decimalCount, $pattern, $thousandsSeparat
     return $out;
 };
 
-function DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties, $priceText){
+function DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties, $price){
 
     $imgHref.=',width='.$width.',height='.$width;
     $articleDesc ='';
@@ -188,6 +182,9 @@ function DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $desi
         $productXml = GetProductTypeXml($locale,$shopId,$productTypeId);
         $apperanceId = $productXml->appearances->appearance->attributes()->id;
     }
+    $currencyHref=$price->currency->attributes('http://www.w3.org/1999/xlink')->href;
+    $currency=CallAPI($currencyHref);
+    $priceText=formatPrice($price->vatIncluded, $currency->symbol, $currency->decimalCount, $currency->pattern, $country->thousandsSeparator, $country->decimalPoint);
     $imgHref.=  ',appearanceId='.$apperanceId;
     echo '<div class="article">';
     echo '<a class="designerLink" href="',$designerUrl,'?',$designerLinkProperties,'&productcolor=',$apperanceId,'" baseUrl="',$designerUrl,'?',$designerLinkProperties,'&productcolor=">';
