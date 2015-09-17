@@ -1,5 +1,4 @@
- <?php
-
+<?php
 function designer_func( $atts ) {
     $a = shortcode_atts( array(
         'shopurl' => '',
@@ -39,7 +38,5 @@ if (isset($_GET['department']))
 }
 
 echo '<iframe height="1800" width="670" src="',$baseShopUrl,$language,'/Shop/Index/Index',$urlExtension,'/" name="Spreadshop" id="Spreadshop" frameborder="0" onload="window.scrollTo(0, 0);"></iframe>';
-
-//    return RenderDesigner();
 }
-
+?>

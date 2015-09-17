@@ -16,5 +16,5 @@ function department_func( $atts ) {
   $departmenturl = $a['departmenturl'];
   $basecategoryurl = $a['basecategoryurl'];
   DrawDepartmentId($locale,$shopId, $departmentId,$categorycount,$departmenturl, $basecategoryurl);
-
 }
+?>

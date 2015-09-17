@@ -21,5 +21,4 @@ function product_func( $atts ) {
   //echo $categoryId;
   DrawProductDetail($locale,$shopId, $departmentid, $categoryid,$productid,$basecategoryurl,$baseproducturl,$basedesignerurl);
 }
-
-
+?>

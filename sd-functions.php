@@ -271,4 +271,3 @@ function CallAPI($url, $data = false)
     return $xml;
 }
 ?>
-

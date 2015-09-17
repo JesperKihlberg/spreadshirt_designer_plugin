@@ -18,7 +18,7 @@ Text Domain: spreadshirt-designer
 This theme, like WordPress, is licensed under the GPL.
 Use it to make something cool, have fun, and share what you've learned with others.
 */
-include("functions.php");
+include("sd-functions.php");
 include("designer.php");
 include("product.php");
 include("department.php");
@@ -45,3 +45,4 @@ function add_css_func()
 function add_js_func(){
     wp_enqueue_script( 'custom-script', plugins_url( '/spreaddesign.js', __FILE__ ) );
 }
+?>

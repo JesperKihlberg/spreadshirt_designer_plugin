@@ -18,4 +18,4 @@ function category_func( $atts ) {
   //echo $categoryId;
   DrawCategory($locale,$shopid, $departmentid, $categoryid,$basecategoryurl,$baseproducturl);
 }
-
+?>
