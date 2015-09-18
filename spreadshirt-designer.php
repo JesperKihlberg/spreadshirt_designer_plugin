@@ -23,12 +23,16 @@ include("designer.php");
 include("product.php");
 include("department.php");
 include("category.php");
+include("article.php");
+include("productlink.php");
 //include("designs.php");
 
 add_shortcode( 'designer', 'designer_func' );
 add_shortcode( 'product', 'product_func' );
 add_shortcode( 'department', 'department_func' );
 add_shortcode( 'category', 'category_func' );
+add_shortcode( 'article', 'article_func' );
+add_shortcode( 'productlink', 'productlink_func' );
 //add_shortcode( 'designs', 'designs_func');
 
 add_action('wp_enqueue_scripts', 'add_css_func');

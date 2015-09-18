@@ -60,7 +60,7 @@ function DrawCategory($locale,$shopId, $departmentId, $categoryId, $baseCategory
     foreach($categoryXml->productTypes->productType as $productType)
     {
         $productId = $productType->attributes()->id;
-        DrawProduct($locale,$shopId,$productId,$baseproducturl);
+        DrawProduct($locale,$shopId,$productId,$baseproducturl, true);
     }
 
 }
@@ -108,7 +108,7 @@ function DrawRelatedArticles($locale,$shopId,$productTypeId,$apperanceId,$width,
             $designerLinkProperties ='product='.$productId;
             $imgUrlProperties= '" productId="'.$productId;
             $price=$article->price;
-            DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties,$price);
+            DrawArticleHtml($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties,$price);
         }
     }
     else
@@ -124,55 +124,30 @@ function DrawRelatedArticles($locale,$shopId,$productTypeId,$apperanceId,$width,
         $imgUrlProperties= '" productTypeId="'.$productTypeId;
         $productXml = GetProductTypeXml($locale,$shopId,$productTypeId);
         $price=$productXml->price;
-        DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties,$price);
+        DrawArticleHtml($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties,$price);
     }
 }
 
-function formatPrice($price, $symbol, $decimalCount, $pattern, $thousandsSeparator, $decimalPoint) {
-    // formatting settings
-    $price = "" . $price;
-    
-    // split integer from cents
-    $centsVal = "";
-    $integerVal = "0";
-    if (strpos($price, '.') != -1) {
-        $centsVal = "" .substr($price, strpos($price, '.') + 1, strlen($price) - strpos($price, '.') + 1);
-        $integerVal = "" .substr($price, 0, strpos($price, '.'));
-    } else {
-        $integerVal = $price;
-    }
-    
-    $formatted = "";
-    
-    $count = 0;
-    for ($j = strlen($integerVal)-1; $j >= 0; $j--) {
-        $character = $integerVal[$j];
-        $count++;
-        if ($count % 3 == 0)
-            $formatted = ($thousandsSeparator . $character) . $formatted;
-        else
-            $formatted = $character . $formatted;
-    }
-    if ($formatted[0] == $thousandsSeparator)
-        $formatted = substr($formatted, 1, strlen($formatted));
-    
-    $formatted .= $decimalPoint;
-    
-    for ($j = 0; $j < $decimalCount; $j++) {
-        if($j < strlen($centsVal)) {
-            $formatted .= "" . $centsVal[$j];
-        } else {
-            $formatted .= "0";
+function DrawArticle($locale,$shopId,$articleId,$productTypeId,$apperanceId,$width,$designerUrl){
+    $articleHref = GetApiBaseUrl().$shopId.'/articles/'.$articleId;
+    $articleXml = CallAPI($articleHref);
+
+    if($articleXml->count()>0)
+    {
+        foreach($articleXml->article as $article){
+            $imgHref=$article->resources->resource->attributes('http://www.w3.org/1999/xlink')->href;
+            $productId = explode("/views/",explode("/products/",$imgHref)[1])[0];
+            
+            $designerLinkProperties ='product='.$productId;
+            $imgUrlProperties= '" productId="'.$productId;
+            $price=$article->price;
+            DrawArticleHtml($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties,$price);
         }
     }
     
-    $out = $pattern;
-    $out = str_replace('%', $formatted, $out);
-    $out = str_replace('$', $symbol, $out);
-    return $out;
-};
+}
 
-function DrawArticle($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties, $price){
+function DrawArticleHtml($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties, $price){
 
     $imgHref.=',width='.$width.',height='.$width;
     $articleDesc ='';
@@ -211,11 +186,13 @@ function DrawAppearanceIcons($locale,$shopId,$productId){
 }
 
 
-function DrawProduct($locale,$shopId,$productId,$baseproducturl){
+function DrawProduct($locale,$shopId,$productId,$baseproducturl,$drawHeader){
     $productXml = GetProductTypeXml($locale,$shopId,$productId);
     echo '<fieldset class="category">';
     $refurl=$baseproducturl.'?productid='.$productId;
-    echo '<a href="',$refurl,'">',$productXml->name,'</a>';
+    if($drawHeader){
+        echo '<a href="',$refurl,'">',$productXml->name,'</a>';
+    }
     echo '<a href="',$refurl,'">';
     DrawProductImage($locale,$shopId,$productId);
     echo '</a>';
@@ -266,5 +243,49 @@ function CallAPI($url, $data = false)
     $xml = simplexml_load_string($result);
     //  $xml->registerXPathNamespace("xlink", 'http://www.w3.org/1999/xlink');
     return $xml;
+}
+
+function formatPrice($price, $symbol, $decimalCount, $pattern, $thousandsSeparator, $decimalPoint) {
+    // formatting settings
+    $price = "" . $price;
+    
+    // split integer from cents
+    $centsVal = "";
+    $integerVal = "0";
+    if (strpos($price, '.') != -1) {
+        $centsVal = "" .substr($price, strpos($price, '.') + 1, strlen($price) - strpos($price, '.') + 1);
+        $integerVal = "" .substr($price, 0, strpos($price, '.'));
+    } else {
+        $integerVal = $price;
+    }
+    
+    $formatted = "";
+    
+    $count = 0;
+    for ($j = strlen($integerVal)-1; $j >= 0; $j--) {
+        $character = $integerVal[$j];
+        $count++;
+        if ($count % 3 == 0)
+            $formatted = ($thousandsSeparator . $character) . $formatted;
+        else
+            $formatted = $character . $formatted;
+    }
+    if ($formatted[0] == $thousandsSeparator)
+        $formatted = substr($formatted, 1, strlen($formatted));
+    
+    $formatted .= $decimalPoint;
+    
+    for ($j = 0; $j < $decimalCount; $j++) {
+        if($j < strlen($centsVal)) {
+            $formatted .= "" . $centsVal[$j];
+        } else {
+            $formatted .= "0";
+        }
+    }
+    
+    $out = $pattern;
+    $out = str_replace('%', $formatted, $out);
+    $out = str_replace('$', $symbol, $out);
+    return $out;
 }
 ?>
