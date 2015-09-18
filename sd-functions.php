@@ -40,10 +40,10 @@ function DrawCategories($locale,$shopId,$maxCount, $departmentXml,$baseCategoryU
         //$productXml = CallAPI(
         echo '<fieldset class="category">';
         $refurl=$baseCategoryUrl.'?departmentid='.$departmentId.'&categoryid='.$cat->attributes()->id;
-        echo '<a href="',$refurl,'">',$cat->name,'</a>';
         echo '<a href="',$refurl,'">';
         DrawProductImage($locale,$shopId,$productId);
         echo '</a>';
+        echo '<a href="',$refurl,'">',$cat->name,'</a>';
         echo '</fieldset>';
         $i=$i+1;
         if($i>=$maxCount)
@@ -62,7 +62,6 @@ function DrawCategory($locale,$shopId, $departmentId, $categoryId, $baseCategory
         $productId = $productType->attributes()->id;
         DrawProduct($locale,$shopId,$productId,$baseproducturl, true);
     }
-
 }
 
 function DrawProductImage($locale,$shopId,$productId)
@@ -72,12 +71,14 @@ function DrawProductImage($locale,$shopId,$productId)
 
 function DrawProductImageAppearance($locale,$shopId,$productId,$apperanceId, $width)
 {
-    $articleHref = GetApiBaseUrl().$shopId.'/articles?query=+productTypeIds:('.$productId.')&limit=1';
+    $articleHref = GetApiBaseUrl().$shopId.'/articles?query=+productTypeIds:('.$productId.')&limit=10';
     $articleXml = CallAPI($articleHref);
     $imgHref = '';
     if($articleXml->count()>0)
     {
-        $imgHref=$articleXml->article->resources->resource->attributes('http://www.w3.org/1999/xlink')->href;
+        $articleNb = rand(0,$articleXml->count()-1);
+        $imgHref=$articleXml->article[$articleNb]->resources->resource->attributes('http://www.w3.org/1999/xlink')->href;
+
     }
     else
     {
@@ -108,7 +109,8 @@ function DrawRelatedArticles($locale,$shopId,$productTypeId,$apperanceId,$width,
             $designerLinkProperties ='product='.$productId;
             $imgUrlProperties= '" productId="'.$productId;
             $price=$article->price;
-            DrawArticleHtml($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties,$price);
+            DrawArticleHtml($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, 
+                $designerLinkProperties, $imgUrlProperties,$price);
         }
     }
     else
@@ -124,7 +126,8 @@ function DrawRelatedArticles($locale,$shopId,$productTypeId,$apperanceId,$width,
         $imgUrlProperties= '" productTypeId="'.$productTypeId;
         $productXml = GetProductTypeXml($locale,$shopId,$productTypeId);
         $price=$productXml->price;
-        DrawArticleHtml($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties,$price);
+        DrawArticleHtml($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, 
+            $designerLinkProperties, $imgUrlProperties,$price);
     }
 }
 
@@ -141,13 +144,15 @@ function DrawArticle($locale,$shopId,$articleId,$productTypeId,$apperanceId,$wid
             $designerLinkProperties ='product='.$productId;
             $imgUrlProperties= '" productId="'.$productId;
             $price=$article->price;
-            DrawArticleHtml($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties,$price);
+            DrawArticleHtml($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, 
+                $designerLinkProperties, $imgUrlProperties,$price);
         }
     }
     
 }
 
-function DrawArticleHtml($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties, $price){
+function DrawArticleHtml($locale,$shopId,$productTypeId, $apperanceId, $width, $designerUrl, $imgHref, 
+    $designerLinkProperties, $imgUrlProperties, $price){
 
     $imgHref.=',width='.$width.',height='.$width;
     $articleDesc ='';
@@ -159,17 +164,19 @@ function DrawArticleHtml($locale,$shopId,$productTypeId, $apperanceId, $width, $
     }
     $currencyHref=$price->currency->attributes('http://www.w3.org/1999/xlink')->href;
     $currency=CallAPI($currencyHref);
-    $priceText=formatPrice($price->vatIncluded, $currency->symbol, $currency->decimalCount, $currency->pattern, $country->thousandsSeparator, $country->decimalPoint);
+    $priceText=formatPrice($price->vatIncluded, $currency->symbol, $currency->decimalCount, $currency->pattern, 
+        $country->thousandsSeparator, $country->decimalPoint);
     $imgHref.=  ',appearanceId='.$apperanceId;
-    echo '<div class="article">';
-    echo '<a class="designerLink" href="',$designerUrl,'?',$designerLinkProperties,'&productcolor=',$apperanceId,'" baseUrl="',$designerUrl,'?',$designerLinkProperties,'&productcolor=">';
+    echo '<fieldset class="article">';
+    echo '<a class="designerLink" href="',$designerUrl,'?',$designerLinkProperties,'&productcolor=',$apperanceId,
+        '" baseUrl="',$designerUrl,'?',$designerLinkProperties,'&productcolor=">';
     echo '<div data-content="TILPAS OG BESTIL" class="designerLinkDiv">';
     echo '<img class="articleThumb" baseUrl="',$baseHref,',appearanceId="',$imgUrlProperties,'" src="',$imgHref,'"/>'; 
     echo '</div>';
     echo '</a>';
     echo '<div class="priceTag">',$priceText,'</div>';
     echo '<div class="smallArticleDesc">',$articleDesc,'</div>';
-    echo '</div>';
+    echo '</fieldset>';
 }
 
 function DrawAppearanceIcons($locale,$shopId,$productId){
@@ -190,12 +197,12 @@ function DrawProduct($locale,$shopId,$productId,$baseproducturl,$drawHeader){
     $productXml = GetProductTypeXml($locale,$shopId,$productId);
     echo '<fieldset class="category">';
     $refurl=$baseproducturl.'?productid='.$productId;
-    if($drawHeader){
-        echo '<a href="',$refurl,'">',$productXml->name,'</a>';
-    }
     echo '<a href="',$refurl,'">';
     DrawProductImage($locale,$shopId,$productId);
     echo '</a>';
+    if($drawHeader){
+        echo '<a href="',$refurl,'">',$productXml->name,'</a>';
+    }
     echo '</fieldset>';
     
 }
