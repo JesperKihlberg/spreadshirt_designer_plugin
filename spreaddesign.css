@@ -1,15 +1,17 @@
-fieldset {
+fieldset.category, fieldset.article {
    position: relative;
     width: 135px;
     height:171px;
     overflow: hidden;
     display:inline-block;
+    margin: 1px;
+    padding: 1px;
 }
 fieldset.smallproduct {
    position: relative;
     width: 110px;
     height:105px;
-    /*overflow: hidden;*/
+    overflow: hidden;
     display:inline-block;
 }
 
