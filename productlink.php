@@ -14,6 +14,6 @@ function productlink_func( $atts ) {
     $drawHeader = $a['drawheader'];
     $baseproducturl = $a['baseproducturl'];
 
-    DrawProduct($locale,$shopId,$productTypeId,$baseproducturl,$drawHeader)
+    DrawProduct($locale,$shopId,$productTypeId,$baseproducturl,$drawHeader);
 }
 ?>
