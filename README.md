@@ -5,5 +5,6 @@ This is a plugin for WordPress that allows you to integrate your spreadshirt des
 The following shortcodes are available:
 
 Article:
-
+```code
 [article shopid="205909" locale="dk_DK" productid="132727279" producttypeid="812" apperanceid="1" width ="75" basedesignerurl="/designer-dk"]
+```
