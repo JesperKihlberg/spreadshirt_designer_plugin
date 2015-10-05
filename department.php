@@ -15,6 +15,11 @@ function department_func( $atts ) {
   $categorycount = $a['categorycount'];
   $departmenturl = $a['departmenturl'];
   $basecategoryurl = $a['basecategoryurl'];
+  ob_start();
   DrawDepartmentId($locale,$shopId, $departmentId,$categorycount,$departmenturl, $basecategoryurl);
+  $output_string=ob_get_contents();;
+  ob_end_clean();
+
+  return $output_string;
 }
 ?>

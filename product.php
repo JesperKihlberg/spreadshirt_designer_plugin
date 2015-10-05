@@ -19,6 +19,11 @@ function product_func( $atts ) {
   $productid=$_GET['productid'];
   //echo $departmentId;
   //echo $categoryId;
+  ob_start();
   DrawProductDetail($locale,$shopId, $departmentid, $categoryid,$productid,$basecategoryurl,$baseproducturl,$basedesignerurl);
+  $output_string=ob_get_contents();;
+  ob_end_clean();
+
+  return $output_string;
 }
 ?>

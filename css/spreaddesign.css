@@ -1,0 +1,231 @@
+fieldset.smallproduct {
+	position: relative;
+	width: 110px;
+	height: 105px;
+	overflow: hidden;
+	display: inline-block;
+}
+
+div.productName {
+	font-weight: bold;
+	font-size: 110%;
+}
+
+fieldset.category, fieldset.article {
+	position: relative;
+	/*    width: 135px;*/
+	overflow: hidden;
+	display: inline-block;
+	padding: 1px;
+	background-color: lightgrey;
+	margin: 2px;
+	border-width: 4px;
+	border-color: lightgray;
+	border-style: solid;
+	vertical-align: top;
+	/*    height: 236;*/
+}
+div.thumbDiv{
+	clear:left;
+}
+img.articleThumb {
+	display: inline-block;
+	zoom: 1;
+	margin-right:1px;
+}
+
+img.appearanceIcon {
+	border: 1px solid #021a40;
+	margin: .5px;
+}
+
+div.appearanceIcons {
+	width: 80px;
+	height: 66px;
+	float: left;
+	margin-right: 4px;
+}
+
+div.sizeSelector {
+	width: 50px;
+	height: 66px;
+	float: left;
+}
+#tshirt_form{
+	margin-bottom:4px;
+}
+div#shoppingbag.shoppingbaghover {
+	width: 40px;
+	height: 40px;
+	z-index: 2;
+	background: #e6e6e6;
+	background: rgba(230, 230, 230, 0.7);
+	-ms-border-radius: 4px;
+	border-radius: 4px;
+	position: fixed;
+	top: 10px;
+	right: 10px;
+	text-align: center;
+}
+
+#shoppingbagcontents {
+	width: 40px;
+	height: 40px;
+	position: relative;
+}
+
+#shoppingbagimg {
+	position: absolute;
+	left: 2px;
+	top: 2px;
+}
+
+#shoppingbagitems {
+	width: 40px;
+	z-index: 100;
+	position: absolute;
+	top: 1px;
+	color: white;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.popup {
+	width: 95%;
+	height: 600px;
+	z-index: 3;
+	background: #e6e6e6;
+	background: rgba(230, 230, 230, 0.7);
+	-ms-border-radius: 4px;
+	border-radius: 4px;
+	position: fixed;
+	top: 10px;
+	right: 10px;
+	text-align: center;
+}
+
+.closeCheckout {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	background: white;
+	color: black;
+	font: icon;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+iframe {
+	width: 100%;
+	height: 100%;
+}
+
+/*     .designerLink:after, .designerLink:before { */
+/*         opacity: 0; */
+/*         transition: all 0.5s; */
+/*         -webkit-transition: all 0.5s; */
+/*     } */
+/*     .designerLink:hover:after, .designerLink:hover:before { */
+/*         opacity: 1; */
+/*     } */
+
+/* a.designLink:before{ */
+/*         content: attr(data-content); */
+/*         width: 100%; */
+/*         color: #fff; */
+/*         z-index: 1; */
+/*         bottom: 50px; */
+/*         padding: 4px 10px; */
+/*         text-align: center; */
+/*         box-sizing: border-box; */
+/*         -moz-box-sizing: border-box; */
+/* } */
+/* a.designLink:after{ */
+/*         content: '\A'; */
+/*         background: rgba(0,0,0,0.6); */
+/* } */
+/* .designerLinkDiv130 { */
+/*     position: relative; */
+/*     width: 130px; */
+/*     height: 171px; */
+/* } */
+
+/*     .designerLinkDiv130:after, .designerLinkDiv130:before { */
+/*         position: absolute; */
+/*         opacity: 0; */
+/*         transition: all 0.5s; */
+/*         -webkit-transition: all 0.5s; */
+/*     } */
+
+/*     .designerLinkDiv130:after { */
+/*         content: '\A'; */
+/*         width: 100%; */
+/*         height: 100%; */
+/*         bottom: 50px; */
+/*         left: 0; */
+/*         background: rgba(0,0,0,0.6); */
+/*     } */
+
+/*     .designerLinkDiv130:before { */
+/*         content: attr(data-content); */
+/*         width: 100%; */
+/*         color: #fff; */
+/*         z-index: 1; */
+/*         bottom: 50px; */
+/*         padding: 4px 10px; */
+/*         text-align: center; */
+/*         box-sizing: border-box; */
+/*         -moz-box-sizing: border-box; */
+/*     } */
+
+/*     .designerLinkDiv130:hover:after, .designerLinkDiv130:hover:before { */
+/*         opacity: 1; */
+/*     } */
+
+/* fieldset.article75 { */
+/*     position: relative; */
+/*     width: 75px; */
+/*     height: 111px; */
+/*     overflow: hidden; */
+/*     display: inline-block; */
+/*     margin: 1px; */
+/*     padding: 1px; */
+/* } */
+
+/* .designerLinkDiv75 { */
+/*     position: relative; */
+/*     width: 75px; */
+/*     height: 111px; */
+/* } */
+
+/*     .designerLinkDiv75:after, .designerLinkDiv75:before { */
+/*         position: absolute; */
+/*         opacity: 0; */
+/*         transition: all 0.5s; */
+/*         -webkit-transition: all 0.5s; */
+/*     } */
+
+/*     .designerLinkDiv75:after { */
+/*         content: '\A'; */
+/*         width: 100%; */
+/*         height: 100%; */
+/*         top: 0; */
+/*         left: 0; */
+/*         background: rgba(0,0,0,0.6); */
+/*     } */
+
+/*     .designerLinkDiv75:before { */
+/*         content: attr(data-content); */
+/*         width: 100%; */
+/*         color: #fff; */
+/*         z-index: 1; */
+/*         bottom: 10px; */
+/*         padding: 4px 10px; */
+/*         text-align: center; */
+/*         box-sizing: border-box; */
+/*         -moz-box-sizing: border-box; */
+/*     } */
+
+/*     .designerLinkDiv75:hover:after, .designerLinkDiv75:hover:before { */
+/*         opacity: 1; */
+/*     } */

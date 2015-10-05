@@ -22,8 +22,11 @@ function category_func( $atts ) {
     if($categoryid==''){
         $categoryid=$_GET['categoryid'];
     }
-    echo $departmentId;
-    echo $categoryId;
+    ob_start();
     DrawCategory($locale,$shopid, $departmentid, $categoryid,$basecategoryurl,$baseproducturl);
+    $output_string=ob_get_contents();;
+    ob_end_clean();
+
+    return $output_string;
 }
 ?>

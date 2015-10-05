@@ -3,7 +3,7 @@ function article_func( $atts ) {
     $a = shortcode_atts( array(
         'shopid' => '',
         'locale' => '',
-        'articleid' => '',
+        'productid' => '',
         'producttypeid' => '',
         'apperanceid' => '',
         'width' => '130',
@@ -12,12 +12,17 @@ function article_func( $atts ) {
 
     $shopId = $a['shopid'];// 'http://monshirtdk.spreadshirt.dk';
     $locale = '?locale='.$a['locale'];//'/dk/DK';
-    $articleId = $a['articleid'];
+    $productId = $a['productid'];
     $productTypeId = $a['producttypeid'];
     $apperanceId = $a['apperanceid'];
     $width = $a['width'];
     $designerUrl = $a['basedesignerurl'];
 
-    DrawArticle($locale,$shopId,$articleId,$productTypeId,$apperanceId,$width,$designerUrl);
+    ob_start();
+    DrawArticle($locale,$shopId,$productId,$productTypeId,$apperanceId,$width,$designerUrl);
+    $output_string=ob_get_contents();;
+    ob_end_clean();
+
+    return $output_string;
 }
 ?>
