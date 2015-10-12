@@ -121,29 +121,32 @@ function DrawArticle($locale, $shopId, $productId, $productTypeId, $apperanceId,
 		}
 	}
 }
-function DrawArticleHtml($locale, $shopId, $productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties, $price, $articleId) {
+function DrawArticleHtml($locale, $shopId, $productTypeId, $apperanceId, $width, $thumbImageUrl, $imgHref, $designerLinkProperties, $imgUrlProperties, $price, $articleId) {
 	$imgHref .= ',width=' . $width . ',height=' . $width;
 	$articleDesc = '';
 	$baseHref = $imgHref;
+	$productXml = GetProductTypeXml ( $locale, $shopId, $productTypeId );
 	if ($apperanceId == '') {
-		$productXml = GetProductTypeXml ( $locale, $shopId, $productTypeId );
 		$apperanceId = $productXml->appearances->appearance->attributes ()->id;
 	}
 	$currencyHref = $price->currency->attributes ( 'http://www.w3.org/1999/xlink' )->href;
 	$currency = CallAPI ( $currencyHref );
 	$priceText = formatPrice ( $price->vatIncluded, $currency->symbol, $currency->decimalCount, $currency->pattern, $country->thousandsSeparator, $country->decimalPoint );
 	$imgHref .= ',appearanceId=' . $apperanceId;
+	$sizeText = "St&oslashrrelse";
+	$colorText = "Farve";
+	$addBasketText = "L&AEligG I KURVEN";
 	//echo '<fieldset class="article', $width, '">';
 	echo '<fieldset class="article">';
 	echo '<form action=""method="post" name="tshirt_form" id="tshirt_form">';
 	//echo '<input type="hidden" name="product" id="productId" value="132727161" />';
 	echo '<input type="hidden" name="article" id="articleId" value="'.$articleId.'" />';
 	echo '<input type="hidden" name="view" id="currentView16047246" value="351" />';
-	echo '<input type="hidden" name="color" id="productColor16047246" value="1" />';
+	echo '<input type="hidden" name="color" id="productColor16047246" value="',$apperanceId,'" />';
 	echo '<input type="hidden" name="quantity" id="quantity" value="1" />';
-	DrawAppearanceIcons ( $locale, $shopId, $productTypeId );
+	DrawAppearanceIcons ( $locale, $shopId, $productTypeId, $colorText );
 	echo '<div class="sizeSelector">';
-	echo "<div>Size:</div>";
+	echo "<div>".$sizeText.":</div>";
 	echo '<select class="b-core-ui-select__select" id="size" name="size"';
 	echo 'onchange="redirect(this);">';
 	DrawSizeOptions($locale, $shopId, $productTypeId);
@@ -152,14 +155,20 @@ function DrawArticleHtml($locale, $shopId, $productTypeId, $apperanceId, $width,
 	echo '</div>';
 	// echo '<div data-content="VIS DETALJER" class="designerLinkDiv', $width, '">';
 	echo '<div class="thumbDiv">';
-	echo '<a class="designerLink" data-content="VIS DETALJER" href="', $designerUrl, '?', $designerLinkProperties, '&productcolor=', $apperanceId, '" baseUrl="', $designerUrl, '?', $designerLinkProperties, '&productcolor=">';
+	echo '<a class="designerLink" data-content="VIS DETALJER" href="', $thumbImageUrl, '?', $designerLinkProperties, '&productcolor=', $apperanceId, '" baseUrl="', $thumbImageUrl, '?', $designerLinkProperties, '&productcolor=">';
 	echo '<img class="articleThumb" baseUrl="', $baseHref, ',appearanceId="', $imgUrlProperties, '" src="', $imgHref, '"/>';
 	echo '</a>';
+	echo '</div>';
+	echo '<div class="productDescription">';
+	echo '<div class="productName">', $productXml->name, '</div>';
+	echo '<div class="productShortDesc">', $productXml->shortDescription, '</div>';
+	echo '<div class="productDesc">', $productXml->description, '</div>';
+	echo ' 			<a href="#" class="closeProductDescription">X</a> ';
 	echo '</div>';
 	// echo '</div>';
 	echo '<div class="smallArticleDesc">', $articleDesc, '</div>';
 	echo '<div class="priceTag">', $priceText, '</div>';
-	echo '<button class="addToCart">ADD TO BASKET</button>';
+	echo '<button class="addToCart">'.$addBasketText.'</button>';
 	echo '</form>';
 	echo '</fieldset>';
 }
@@ -170,10 +179,11 @@ function DrawSizeOptions($locale, $shopId, $productTypeId){
 		echo '<option value="'.$size->attributes()->id.'">'.$size->name.'</option>';
 	}
 }
-function DrawAppearanceIcons($locale, $shopId, $productTypeId) {
+function DrawAppearanceIcons($locale, $shopId, $productTypeId, $colorText) {
 	$productXml = GetProductTypeXml ( $locale, $shopId, $productTypeId );
 	echo '<div class="appearanceIcons">';
-	echo '<div>Color:</div>';
+	echo '<div>'.$colorText.':</div>';
+	echo '<div class="appearanceIconDiv">';
 	foreach ( $productXml->appearances->appearance as $appearance ) {
 		$imgHref = $appearance->resources->resource->attributes ( 'http://www.w3.org/1999/xlink' )->href;
 		$name = $appearance->name;
@@ -181,6 +191,7 @@ function DrawAppearanceIcons($locale, $shopId, $productTypeId) {
 		//echo '<img class="appearanceIcon" onClick="onAppereanceClick(', $appearanceId, ')" appearanceId="', $appearanceId, '" src="', $imgHref, '" alt="', $name, '" title="', $name, '" />';
 		echo '<img class="appearanceIcon" appearanceId="', $appearanceId, '" src="', $imgHref, '" alt="', $name, '" title="', $name, '" />';
 	}
+	echo '</div>';
 	echo '</div>';
 }
 function DrawProduct($locale, $shopId, $productId, $baseproducturl, $drawHeader) {
@@ -200,8 +211,8 @@ function DrawProductDetail($locale, $shopId, $departmentId, $categoryId, $produc
 	echo '<div class="productName">', $productXml->name, '</div>';
 	echo '<div class="productShortDesc">', $productXml->shortDescription, '</div>';
 	echo '<div class="productDesc">', $productXml->description, '</div>';
-	DrawAppearanceIcons ( $locale, $shopId, $productId );
-	DrawRelatedArticles ( $locale, $shopId, $productId, '', 130, $basedesignerurl );
+//	DrawAppearanceIcons ( $locale, $shopId, $productId );
+//	DrawRelatedArticles ( $locale, $shopId, $productId, '', 130, $basedesignerurl );
 }
 function DrawDesigns($count, $locale, $shopId, $departmentid, $categoryid, $productid, $basecategoryurl, $baseproducturl, $basedesignerurl) {
 	echo 'designs';
@@ -234,7 +245,6 @@ function GetShoppingBag(){
 	echo '		<a href="#" class="closeCheckout">X</a>';
 	echo '		</div>';
 	echo '		</div>';
-	
 }
 
 function QueryAttribute($xmlNode, $attr_name, $attr_value) {

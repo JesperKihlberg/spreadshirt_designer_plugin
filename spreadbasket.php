@@ -1,28 +1,26 @@
 <?php
-session_start();
-$domain = ".monshirt.eu";
-ini_set('session.cookie_domain', $domain );
+//session_start();
+//$domain = ".monshirt.eu";
+//ini_set('session.cookie_domain', $domain );
 header("Pragma: no-cache");
 header("Cache-Control: no-store, no-cache, max-age=0, must-revalidate");
-$language = addslashes($_GET['l']);
-$shopid = addslashes($_GET['shop']);
+$language = addslashes($_POST['l']);
+$shopid = addslashes($_POST['shop']);
 
 
 // if($_SERVER['HTTP_X_REQUESTED_WITH'] != 'XMLHttpRequest') {
 //  die("no direct access allowed");
 // }
 
-if (!is_writable(session_save_path())) {
-	echo 'Session path "'.session_save_path().'" is not writable for PHP!';
-}
+//if (!is_writable(session_save_path())) {
+//	echo 'Session path "'.session_save_path().'" is not writable for PHP!';
+//}
 
-if(!session_id()) {
-    $lifetime=60 * 60 * 24 * 365;
-    session_set_cookie_params($lifetime,"/",$domain);
-    @session_start();
-}
-
-
+//if(!session_id()) {
+//    $lifetime=60 * 60 * 24 * 365;
+//    session_set_cookie_params($lifetime,"/",$domain);
+//    @session_start();
+//}
 
 
 $locale = '?locale=dk_DK';
@@ -31,7 +29,7 @@ $departmentId='10';
 $key="53326d6f-40ea-4300-8389-25e890e6ed8c";
 $secret="89667884-f05b-4c0e-98de-8679130aa6e6";
 
-$config['ShopSource'] = "net";
+$config['ShopSource'] = "dk";
 $config['ShopId'] = $shopId;
 $config['ShopKey'] = $key;
 $config['ShopSecret'] = $secret;

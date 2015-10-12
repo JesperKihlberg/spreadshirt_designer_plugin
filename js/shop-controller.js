@@ -1,25 +1,27 @@
-﻿var shopajaxUrl = "/app/spreadbasket.php/";
+﻿var shopajaxUrl = ShopAjax.ajaxurl;
 var language = "dk";
 var shopId = "1034542";
-var props="l=" + language + "&shop=" + shopId;
+//var props="l=" + language + "&shop=" + shopId;
 
 jQuery(function ($) {
     //$('form').submit(function(event) {
     $(".addToCart").click(function (event) {
         event.preventDefault();
 
-        var $data = [];
         var $form = $(this).parent().parent().find("form");
 
-        $data.push(
-        { name: "appearance", value: $form.find("input[name=color]").val() },
-        { name: "view", value: $form.find("input[name=view]").val() },
-        { name: "article", value: $form.find("#articleId").val() },
-        { name: "quantity", value: $form.find("#quantity").val() },
-        { name: "size", value: $form.find("#size").val() }
-        );
+        var data ={
+         action : 'spreadshirtdesignershop-additem' ,
+        shopid : shopId ,
+        language : language ,
+         appearance : $form.find("input[name=color]").val() ,
+         view : $form.find("input[name=view]").val() ,
+         article : $form.find("#articleId").val() ,
+         quantity : $form.find("#quantity").val() ,
+         size : $form.find("#size").val() 
+        };
 
-        $.post(shopajaxUrl+"?"+props, $data, function (json) {
+        $.post(shopajaxUrl, data, function (json) {
 
             $("a.openpop").attr("href",  json.c.u);
             $(".basket-counter").text(json.c.q);
@@ -33,23 +35,27 @@ jQuery(function ($) {
         e.preventDefault();
 
         var $this = $(this);
-        var $form = $(this).parent().parent();
+        var $form = $(this).parent().parent().parent();
         var $color = $this.attr("appearanceId");
         var $img = $form.find("img[class=articleThumb]");
         var $baseUrl = $img.attr("baseUrl");
         $img.prop('src', $baseUrl + $color);
         $form.find("input[name=color]").val($color);
     });
-
+    var data ={
+            action : 'spreadshirtdesignershop-getbasket' ,
+            shopid : shopId ,
+            language : language
+            };
     // get basket on call
-    $.get(shopajaxUrl+"?basket"+"&"+props, function (json) {
+    $.get(shopajaxUrl, data, function (json) {
         $("a.openpop").attr("href", json.c.u);
         $(".basket-counter").text(json.c.q);
     }, "json");
 
 });
 
-$(document).ready(function () {
+jQuery(document).ready(function($){
     $(".popup").hide();
     $(".openpop").click(function (e) {
         e.preventDefault();
@@ -61,10 +67,25 @@ $(document).ready(function () {
     $(".closeCheckout").click(function () {
         $(this).parent().fadeOut("fast");
         $(".links").fadeIn("fast");
-        $.get(shopajaxUrl+"?basket"+"&"+props, function (json) {
+    	var data ={
+            action : 'spreadshirtdesignershop-getbasket' ,
+            shopid : shopId ,
+            language : language
+            };
+        $.get(shopajaxUrl, data, function (json) {
             $("a.openpop").attr("href", json.c.u);
             $(".basket-counter").text(json.c.q);
         }, "json");
+    });
+
+    $(".productDescription").hide();
+    $(".designerLink").click(function (e) {
+        e.preventDefault();
+        $(this).parent().parent().find(".productDescription").fadeIn("fast");
+    });
+
+    $(".closeProductDescription").click(function () {
+        $(this).parent().fadeOut("fast");
     });
 });
 
