@@ -103,6 +103,33 @@ function DrawRelatedArticles($locale, $shopId, $productTypeId, $apperanceId, $wi
 		DrawArticleHtml ( $locale, $shopId, $productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties, $price, '' );
 	}
 }
+
+function DrawDesignCategory($locale,$shopId,$designCategoryId,$productTypeId,$width){
+	$designCategoryHref = GetApiBaseUrl () . $shopId . '/designCategories/' . $designCategoryId.'/designs' . $locale;
+	$designCategoryXml = CallAPI ( $designCategoryHref );
+	foreach($designCategoryXml->design as $design){
+		$designId = $design -> attributes()->id;
+		DrawDesignItems($locale,$shopId,$designId,$productTypeId,$width);
+	}
+}
+
+function DrawDesignItems($locale,$shopId,$designId,$productTypeId,$width){
+	$articleHref = GetApiBaseUrl () . $shopId . '/articles?query=+productTypeIds:(' . $productTypeId . ')+designIds:('.$designId.')&limit=30';
+	$articleXml = CallAPI ( $articleHref );
+	if ($articleXml->count () > 0) {
+		foreach ( $articleXml->article as $article ) {
+			$imgHref = $article->resources->resource->attributes ( 'http://www.w3.org/1999/xlink' )->href;
+			$productId = explode ( "/views/", explode ( "/products/", $imgHref ) [1] ) [0];
+
+			$articleId=$article-> attributes() -> id;
+			$designerLinkProperties = 'product=' . $productId;
+			$imgUrlProperties = '" productId="' . $productId;
+			$price = $article->price;
+			DrawArticleHtml ( $locale, $shopId, $productTypeId, $apperanceId, $width, $designerUrl, $imgHref, $designerLinkProperties, $imgUrlProperties, $price, $articleId);
+		}
+	}
+}
+
 function DrawArticle($locale, $shopId, $productId, $productTypeId, $apperanceId, $width, $designerUrl) {
 	$articleHref = GetApiBaseUrl () . $shopId . '/articles?query=+productTypeIds:(' . $productTypeId . ')&limit=30';
 	$articleXml = CallAPI ( $articleHref );
@@ -121,6 +148,7 @@ function DrawArticle($locale, $shopId, $productId, $productTypeId, $apperanceId,
 		}
 	}
 }
+
 function DrawArticleHtml($locale, $shopId, $productTypeId, $apperanceId, $width, $thumbImageUrl, $imgHref, $designerLinkProperties, $imgUrlProperties, $price, $articleId) {
 	$imgHref .= ',width=' . $width . ',height=' . $width;
 	$articleDesc = '';
@@ -259,10 +287,10 @@ function CallAPI($url, $data = false) {
 	curl_setopt ( $ch, CURLOPT_URL, $url );
 	curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
 	$result = curl_exec ( $ch );
-	
 	curl_close ( $ch );
-	
+//	echo $result ;
 	$xml = simplexml_load_string ( $result );
+//	echo $xml;
 	// $xml->registerXPathNamespace("xlink", 'http://www.w3.org/1999/xlink');
 	return $xml;
 }

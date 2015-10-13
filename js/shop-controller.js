@@ -81,11 +81,12 @@ jQuery(document).ready(function($){
     $(".productDescription").hide();
     $(".designerLink").click(function (e) {
         e.preventDefault();
-        $(this).parent().parent().find(".productDescription").fadeIn("fast");
+        $(this).parent().parent().find(".productDescription").toggle("fast");
+//        $(this).parent().parent().find(".productDescription").fadeOut("fast");
     });
 
     $(".closeProductDescription").click(function () {
-        $(this).parent().fadeOut("fast");
+        $(this).parent().hide("fast");
     });
 });
 
