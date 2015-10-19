@@ -58,20 +58,26 @@ div.sizeSelector {
 	height: 66px;
 	float: left;
 }
+
+div.sizeSelector select{
+	font-size: smaller;
+	width: 85px;
+} 
+
 #tshirt_form{
 	margin-bottom:4px;
 }
 div#shoppingbag.shoppingbaghover {
 	width: 40px;
 	height: 40px;
-	z-index: 2;
+	z-index: 40;
 	background: #e6e6e6;
 	background: rgba(230, 230, 230, 0.7);
 	-ms-border-radius: 4px;
 	border-radius: 4px;
 	position: fixed;
-	top: 40px;
-	right: 10px;
+	top: 88px;
+	right: 12px;
 	text-align: center;
 }
 
@@ -100,7 +106,7 @@ div#shoppingbag.shoppingbaghover {
 .popup {
 	width: 95%;
 	height: 600px;
-	z-index: 3;
+	z-index: 45;
 	background: #e6e6e6;
 	background: rgba(230, 230, 230, 0.7);
 	-ms-border-radius: 4px;
@@ -130,7 +136,7 @@ iframe {
 .popup {
 	width: 95%;
 	height: 600px;
-	z-index: 3;
+	z-index: 45;
 	background: #e6e6e6;
 	background: rgba(230, 230, 230, 0.7);
 	-ms-border-radius: 4px;
@@ -155,7 +161,7 @@ iframe {
 .productDescription {
     font-size: small;
 	width: 200px;
-    z-index: 3;
+    z-index: 45;
     background: #e6e6e6;
     background: rgba(230, 230, 230, 1);
     -ms-border-radius: 4px;

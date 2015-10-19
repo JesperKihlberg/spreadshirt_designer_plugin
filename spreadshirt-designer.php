@@ -172,7 +172,7 @@ function spreadshirtdesignershop_additem(){
 		addBasketItem($_SESSION['basketUrl'] , $_SESSION['namespaces'] , $data, $shopSource, $shopKey, $shopSecret);
 
 		$basketData = prepareBasket($shopKey, $shopSecret);
-		updateCheckout($shopSource);
+		updateCheckout($shopSource, $shopKey, $shopSecret);
 
 		header( "Content-Type: application/json" );
 		echo json_encode(array("c" => array("u" => $_SESSION['checkoutUrl'],"q" => $basketData[0],"l" => $basketData[1])));
